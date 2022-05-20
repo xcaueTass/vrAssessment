@@ -11,14 +11,17 @@ Login: admin - senha: admin
 - O sitema existe 3 requisições: Cadastro de cartao, ver saldo de cartao, e atualizar saldo do cartao
 
 #### Exemplos de requisição:
+POST
 http://localhost:8081/cartoes/
 {
 "card_number": "6549873025634502",
 "password": "1234"
 }
 
+GET
 http://localhost:8081/cartoes/6549873025634501
 
+POST
 http://localhost:8081/cartoes/transacao
 {
 "card_number": "6549873025634502",
