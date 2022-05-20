@@ -41,7 +41,7 @@ public class CardController {
 	}
 
 	@GetMapping(path = { "/{numeroCartao}" })
-	public ResponseEntity<RegisterCard> searchTcc(@PathVariable String numeroCartao) {
+	public ResponseEntity<RegisterCard> balanceCard(@PathVariable String numeroCartao) {
 
 		log.info("[INICIO] - Consultando cartao: {}", numeroCartao);
 		return ResponseEntity.status(HttpStatus.OK).body(serviceCard.cardBalance(numeroCartao));
