@@ -7,7 +7,8 @@ Avaliação VR
 
 - Para acessar o banco de dados basta acessar: http://localhost:8081/h2-console/
 Login: admin - senha: admin
-
+- Para efetuar a exclusão da database fica localizado no diretorio: vrAssessment\database
+  com nome de dbh2.mv.db
 - O sitema existe 3 requisições: Cadastro de cartao, ver saldo de cartao, e atualizar saldo do cartao
 
 #### Exemplos de requisição:
@@ -30,3 +31,4 @@ http://localhost:8081/cartoes/transacao
 }
 
 - Link para validar swagger local: http://localhost:8081/swagger-ui/index.html#/
+
