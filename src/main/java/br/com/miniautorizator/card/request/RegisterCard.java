@@ -2,12 +2,12 @@ package br.com.miniautorizator.card.request;
 
 import java.util.Optional;
 
+import br.com.miniautorizator.card.exceptions.CardException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.com.miniautorizator.card.entities.CardEntity;
-import br.com.miniautorizator.card.exceptions.CardException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

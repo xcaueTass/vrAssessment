@@ -17,76 +17,84 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServiceCard {
 
-	@Autowired
-	CardRepository cardRepository;
+    @Autowired
+    CardRepository cardRepository;
 
-	@SneakyThrows
-	public RegisterCard cardRegister(RegisterCard registerCard) {
+    @SneakyThrows
+    public RegisterCard cardRegister(RegisterCard registerCard) {
 
-		log.info("[INICIO] - ServiceRegister - Validando se existe cartão");
-		validRegister(registerCard);
+        log.info("[INICIO] - ServiceRegister - Validando se existe cartão");
+        validRegister(registerCard);
 
-		log.info("ServiceRegister - Cartão salvo com sucesso!");
-		return registerCard;
-	}
+        log.info("ServiceRegister - Cartão salvo com sucesso!");
+        return registerCard;
+    }
 
-	@SneakyThrows
-	public RegisterCard cardBalance(String numeroCartao) {
+    @SneakyThrows
+    public RegisterCard cardBalance(String numeroCartao) {
 
-		log.info("[INICIO] - ServiceRegister - Buscando informações na base de dados com nome do cartao: {}",
-				numeroCartao);
-		var dataCard = cardRepository.findCard(numeroCartao)
-				.orElseThrow(() -> new DataBaseExceptions("CARTAO_INEXISTENTE"));
+        log.info("[INICIO] - ServiceRegister - Buscando informações na base de dados com nome do cartao: {}",
+                numeroCartao);
+        var dataCard = cardRepository.findCard(numeroCartao)
+                .orElseThrow(() -> new DataBaseExceptions("CARTAO_INEXISTENTE"));
 
-		return RegisterCard.builder().cardNumber(dataCard.getCardNumber()).valueCard(dataCard.getValueCard()).build();
+        log.info("ServiceRegister - Retornando saldo do cartão");
+        return RegisterCard.builder().cardNumber(dataCard.getCardNumber()).valueCard(dataCard.getValueCard()).build();
 
-	}
+    }
 
-	@SneakyThrows
-	public RegisterCard cardTransaction(RegisterCard registerCard) {
+    @SneakyThrows
+    public RegisterCard cardTransaction(RegisterCard registerCard) {
 
-		Optional<CardEntity> entity = cardRepository.findCardAndPassword(registerCard.getCardNumber(),
-				registerCard.getPassword());
-		registerCard.isCardExist(entity);
+        log.info("[INICIO] - ServiceRegister - Validando se existe cartão");
+        Optional<CardEntity> entity = cardRepository.findCardAndPassword(registerCard.getCardNumber(),
+                registerCard.getPassword());
+        registerCard.isCardExist(entity);
 
-		validBalance(registerCard, entity);
-		
-		return registerCard;
+        log.info("ServiceRegister - Validando se existe saldo no cartão");
+        validBalance(registerCard, entity);
 
-	}
+        log.info("ServiceRegister - Retornando resposta cartão");
+        return registerCard;
 
-	@SneakyThrows
-	private void validBalance(RegisterCard registerCard, Optional<CardEntity> entity) {
-		if (entity.get().getValueCard() >= registerCard.getValueCard()) {
+    }
 
-			var currentBalance = entity.get().getValueCard() - registerCard.getValueCard();
-			updateBalance(registerCard, entity, currentBalance);
+    @SneakyThrows
+    private void validBalance(RegisterCard registerCard, Optional<CardEntity> entity) {
 
-		} else {
-			throw new CardException("SALDO_INSUFICIENTE");
-		}
-	}
+        if (entity.get().getValueCard() >= registerCard.getValueCard()) {
 
-	private void updateBalance(RegisterCard registerCard, Optional<CardEntity> entity, double currentBalance) {
-		var cardEntity = CardEntity.builder().id(entity.get().getId()).cardNumber(registerCard.getCardNumber())
-				.password(registerCard.getPassword()).valueCard(currentBalance).build();
+            log.info("ServiceRegister - Saldo cartão: {}, Saldo a ser descontado: {}", entity.get().getValueCard(), registerCard.getValueCard());
+            var currentBalance = entity.get().getValueCard() - registerCard.getValueCard();
 
-		cardRepository.save(cardEntity);
-	}
+            log.info("ServiceRegister - Saldo atual: {}", currentBalance);
+            updateBalance(registerCard, entity, currentBalance);
 
-	@SneakyThrows
-	private void validRegister(RegisterCard registerCard) {
-		log.info("ServiceRegister - Buscando informações no banco de dados");
-		Optional<CardEntity> entity = cardRepository.findCard(registerCard.getCardNumber());
+        } else {
+            throw new CardException("SALDO_INSUFICIENTE");
+        }
+    }
 
-		log.info("ServiceRegister - validando se existe cartão");
-		registerCard.isCardEmpty(entity);
+    private void updateBalance(RegisterCard registerCard, Optional<CardEntity> entity, double currentBalance) {
+        var cardEntity = CardEntity.builder().id(entity.get().getId()).cardNumber(registerCard.getCardNumber())
+                .password(registerCard.getPassword()).valueCard(currentBalance).build();
 
-		log.info("ServiceRegister - Salvando novo cartão na base de dados!");
-		var cardEntity = CardEntity.builder().cardNumber(registerCard.getCardNumber())
-				.password(registerCard.getPassword()).valueCard(500.00).build();
+        cardRepository.save(cardEntity);
+    }
 
-		cardRepository.save(cardEntity);
-	}
+    @SneakyThrows
+    private void validRegister(RegisterCard registerCard) {
+        log.info("ServiceRegister - Buscando informações no banco de dados");
+        Optional<CardEntity> entity = cardRepository.findCard(registerCard.getCardNumber());
+
+        log.info("ServiceRegister - validando se existe cartão");
+        registerCard.isCardEmpty(entity);
+
+        log.info("ServiceRegister - Salvando novo cartão na base de dados!");
+        var cardEntity = CardEntity.builder().cardNumber(registerCard.getCardNumber())
+                .password(registerCard.getPassword()).valueCard(500.00).build();
+
+        cardRepository.save(cardEntity);
+    }
 
 }
