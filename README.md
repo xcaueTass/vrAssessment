@@ -28,3 +28,6 @@ http://localhost:8081/cartoes/transacao
 "password": "1234",
 "value_card": 9.00
 }
+
+- Link para validar swagger local: http://localhost:8081/swagger-ui/index.html#/
+- 
