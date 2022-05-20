@@ -30,4 +30,3 @@ http://localhost:8081/cartoes/transacao
 }
 
 - Link para validar swagger local: http://localhost:8081/swagger-ui/index.html#/
-- 
