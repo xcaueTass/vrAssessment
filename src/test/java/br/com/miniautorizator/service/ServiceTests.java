@@ -50,14 +50,14 @@ class ServiceTests {
 
 		cardRepository.deleteById((long) 1234567);
 
-		var expected = registerCard;
+		var expected = "Cartão salvo com sucesso";
 		// validação
 		assertEquals(expected, serviceCard.cardRegister(registerCard));
 	}
 
 	@Test
-	@DisplayName("Retorno ja existe cartao")
-	void must_return_exist_card() throws CardException {
+	@DisplayName("Retorno response registrado com sucesso")
+	void must_exist_card() throws CardException {
 
 		CardEntity cardEntitys = CardEntity.builder().id((long) 1234567).cardNumber(cardNumber).password(password)
 				.valueCard(500.00).build();
@@ -66,10 +66,11 @@ class ServiceTests {
 
 		when(cardRepository.findCard(cardNumber)).thenReturn(optionalResponse);
 
+		var expected = "Cartão ja cadastrado";
 		// validação
-		assertThrows(CardException.class, () -> serviceCard.cardRegister(registerCard));
-
+		assertEquals(expected, serviceCard.cardRegister(registerCard));
 	}
+
 
 	@Test
 	@DisplayName("Nao deve retornar nulo")

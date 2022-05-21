@@ -68,13 +68,33 @@ class ControllerTests {
 
 		registerCard = RegisterCard.builder().cardNumber(numberCard).password(password).valueCard(500.00).build();
 
-		Mockito.when(serviceCard.cardRegister(Mockito.any(RegisterCard.class))).thenReturn(anyString());
+		Mockito.when(serviceCard.cardRegister(Mockito.any(RegisterCard.class))).thenReturn("Cartão salvo com sucesso");
 
 		MvcResult result = mockMvc
 				.perform(MockMvcRequestBuilders.post(URI).contentType(MediaType.APPLICATION_JSON)
 						.content(mapper.writeValueAsString(registerCard).getBytes(StandardCharsets.UTF_8))
 						.accept(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
+
+		Assertions.assertThat(result).isNotNull();
+		String cardJson = result.getResponse().getContentAsString();
+		Assertions.assertThat(cardJson).isNotEmpty();
+		Assertions.assertThat(cardJson).isEqualToIgnoringCase(mapper.writeValueAsString(registerCard));
+	}
+
+	@Test
+	@DisplayName("Metodo POST /cartoes - Retorno response registrado com sucesso")
+	void must_return_card_register() throws Exception {
+
+		registerCard = RegisterCard.builder().cardNumber(numberCard).password(password).valueCard(500.00).build();
+
+		Mockito.when(serviceCard.cardRegister(Mockito.any(RegisterCard.class))).thenReturn("Cartão ja cadastrado");
+
+		MvcResult result = mockMvc
+				.perform(MockMvcRequestBuilders.post(URI).contentType(MediaType.APPLICATION_JSON)
+						.content(mapper.writeValueAsString(registerCard).getBytes(StandardCharsets.UTF_8))
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(MockMvcResultMatchers.status().isUnprocessableEntity()).andReturn();
 
 		Assertions.assertThat(result).isNotNull();
 		String cardJson = result.getResponse().getContentAsString();
