@@ -17,17 +17,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServiceCard {
 
+    private static final String SALVO = "Cartão salvo com sucesso";
+    private static final String CADASTRADO = "Cartão ja cadastrado";
     @Autowired
     CardRepository cardRepository;
 
     @SneakyThrows
-    public RegisterCard cardRegister(RegisterCard registerCard) {
+    public String cardRegister(RegisterCard registerCard) {
 
         log.info("[INICIO] - ServiceRegister - Validando se existe cartão");
-        validRegister(registerCard);
+        var response = validRegister(registerCard);
 
         log.info("ServiceRegister - Cartão salvo com sucesso!");
-        return registerCard;
+        return response;
     }
 
     @SneakyThrows
@@ -83,13 +85,18 @@ public class ServiceCard {
     }
 
     @SneakyThrows
-    private void validRegister(RegisterCard registerCard) {
+    private String validRegister(RegisterCard registerCard) {
         log.info("ServiceRegister - Buscando informações no banco de dados");
         Optional<CardEntity> entity = cardRepository.findCard(registerCard.getCardNumber());
 
-        log.info("ServiceRegister - validando se existe cartão");
-        registerCard.isCardEmpty(entity);
+        if (entity.isEmpty()) {
+            saveCard(registerCard);
+            return SALVO;
+        }
+        return CADASTRADO;
+    }
 
+    private void saveCard(RegisterCard registerCard) {
         log.info("ServiceRegister - Salvando novo cartão na base de dados!");
         var cardEntity = CardEntity.builder().cardNumber(registerCard.getCardNumber())
                 .password(registerCard.getPassword()).valueCard(500.00).build();

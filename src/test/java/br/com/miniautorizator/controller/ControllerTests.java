@@ -22,6 +22,8 @@ import br.com.miniautorizator.service.ServiceCard;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyString;
+
 @WebMvcTest(controllers = CardController.class)
 class ControllerTests {
 
@@ -66,7 +68,7 @@ class ControllerTests {
 
 		registerCard = RegisterCard.builder().cardNumber(numberCard).password(password).valueCard(500.00).build();
 
-		Mockito.when(serviceCard.cardRegister(Mockito.any(RegisterCard.class))).thenReturn(registerCard);
+		Mockito.when(serviceCard.cardRegister(Mockito.any(RegisterCard.class))).thenReturn(anyString());
 
 		MvcResult result = mockMvc
 				.perform(MockMvcRequestBuilders.post(URI).contentType(MediaType.APPLICATION_JSON)

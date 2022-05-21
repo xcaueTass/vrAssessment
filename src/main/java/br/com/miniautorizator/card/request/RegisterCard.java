@@ -33,13 +33,6 @@ public class RegisterCard {
     private Double valueCard;
 
     @SneakyThrows
-    public void isCardEmpty(Optional<CardEntity> usersEntity) {
-        if (!usersEntity.isEmpty()) {
-            throw new CardException("Ja existe cartao cadastrado");
-        }
-    }
-
-    @SneakyThrows
     public void isCardExist(Optional<CardEntity> usersEntity) {
         if (usersEntity.isEmpty()) {
             throw new CardException("CARTAO_INEXISTENTE / SENHA_INVALIDA");

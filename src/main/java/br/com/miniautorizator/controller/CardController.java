@@ -33,7 +33,11 @@ public class CardController {
         log.info("[INICIO] - CardController - Registrando novo cartão");
         var response = serviceCard.cardRegister(registerCard);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        if (response.equalsIgnoreCase("Cartão salvo com sucesso")) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(registerCard);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(registerCard);
+        }
     }
 
     @Operation(summary = "Cria um novo cartao")
