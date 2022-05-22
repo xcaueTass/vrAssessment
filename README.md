@@ -23,7 +23,7 @@ Avaliação VR
   } - request (body)
 
 - "card_number": "6549873025634502" - Numero do cartao que deseja cadastrar
-- "password": "1234" - senha do cartao que desenha cadastrar
+- "password": "1234" - senha do cartao que deseja cadastrar
 
 #### GET - Verifica saldo do cartao
 - http://localhost:8081/cartoes/{numeroCartao} - url
