@@ -11,7 +11,7 @@ public class SwaggerConfig {
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("")
-                .packagesToScan("br.com.sulamerica.mspaymentjava.adapters.in.payment")
+                .packagesToScan("br.com.miniautorizator.card.configs")
                 .pathsToMatch("/**")
                 .build();
     }

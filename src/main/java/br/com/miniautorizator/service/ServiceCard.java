@@ -19,24 +19,28 @@ public class ServiceCard {
 
     private static final String SALVO = "Cartão salvo com sucesso";
     private static final String CADASTRADO = "Cartão ja cadastrado";
+    private static final String BODYNULL = "Número do cartao ou Senha não pode ser nulo";
     @Autowired
     CardRepository cardRepository;
 
     @SneakyThrows
     public String cardRegister(RegisterCard registerCard) {
 
-        log.info("[INICIO] - ServiceRegister - Validando se existe cartão");
+        log.info("[INICIO] - ServiceRegister - Validando se body nulo");
+        requestIsNull(registerCard);
+
+        log.info("ServiceRegister - Validando se existe registro");
         var response = validRegister(registerCard);
 
         log.info("ServiceRegister - Cartão salvo com sucesso!");
         return response;
     }
 
-    @SneakyThrows
-    public RegisterCard cardBalance(String numeroCartao) {
+    public RegisterCard cardBalance(String numeroCartao) throws DataBaseExceptions {
 
         log.info("[INICIO] - ServiceRegister - Buscando informações na base de dados com nome do cartao: {}",
                 numeroCartao);
+
         var dataCard = cardRepository.findCard(numeroCartao)
                 .orElseThrow(() -> new DataBaseExceptions("CARTAO_INEXISTENTE"));
 
@@ -45,46 +49,6 @@ public class ServiceCard {
 
     }
 
-    @SneakyThrows
-    public RegisterCard cardTransaction(RegisterCard registerCard) {
-
-        log.info("[INICIO] - ServiceRegister - Validando se existe cartão");
-        Optional<CardEntity> entity = cardRepository.findCardAndPassword(registerCard.getCardNumber(),
-                registerCard.getPassword());
-        registerCard.isCardExist(entity);
-
-        log.info("ServiceRegister - Validando se existe saldo no cartão");
-        validBalance(registerCard, entity);
-
-        log.info("ServiceRegister - Retornando resposta cartão");
-        return registerCard;
-
-    }
-
-    @SneakyThrows
-    private void validBalance(RegisterCard registerCard, Optional<CardEntity> entity) {
-
-        if (entity.get().getValueCard() >= registerCard.getValueCard()) {
-
-            log.info("ServiceRegister - Saldo cartão: {}, Saldo a ser descontado: {}", entity.get().getValueCard(), registerCard.getValueCard());
-            var currentBalance = entity.get().getValueCard() - registerCard.getValueCard();
-
-            log.info("ServiceRegister - Saldo atual: {}", currentBalance);
-            updateBalance(registerCard, entity, currentBalance);
-
-        } else {
-            throw new CardException("SALDO_INSUFICIENTE");
-        }
-    }
-
-    private void updateBalance(RegisterCard registerCard, Optional<CardEntity> entity, double currentBalance) {
-        var cardEntity = CardEntity.builder().id(entity.get().getId()).cardNumber(registerCard.getCardNumber())
-                .password(registerCard.getPassword()).valueCard(currentBalance).build();
-
-        cardRepository.save(cardEntity);
-    }
-
-    @SneakyThrows
     private String validRegister(RegisterCard registerCard) {
         log.info("ServiceRegister - Buscando informações no banco de dados");
         Optional<CardEntity> entity = cardRepository.findCard(registerCard.getCardNumber());
@@ -94,6 +58,13 @@ public class ServiceCard {
             return SALVO;
         }
         return CADASTRADO;
+    }
+
+    @SneakyThrows
+    private void requestIsNull(RegisterCard registerCard) {
+        if (registerCard.getCardNumber().isEmpty() || registerCard.getPassword().isEmpty()) {
+            throw new CardException(BODYNULL);
+        }
     }
 
     private void saveCard(RegisterCard registerCard) {

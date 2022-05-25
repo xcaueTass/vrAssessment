@@ -1,5 +1,6 @@
 package br.com.miniautorizator.controller;
 
+import br.com.miniautorizator.card.exceptions.DataBaseExceptions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -40,19 +41,6 @@ public class CardController {
         }
     }
 
-    @Operation(summary = "Cria um novo cartao")
-    @ResponseStatus(HttpStatus.CREATED)
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created"),
-            @ApiResponse(responseCode = "422", description = "Unprocessable Entity"),
-    })
-    @PostMapping("/transacao")
-    public ResponseEntity<RegisterCard> transactions(@Validated @RequestBody RegisterCard registerCard) {
-
-        log.info("[INICIO] - CardController - Efetuando uma transação");
-        serviceCard.cardTransaction(registerCard);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
 
     @Operation(summary = "Cria um novo cartao")
     @ResponseStatus(HttpStatus.CREATED)
@@ -61,7 +49,7 @@ public class CardController {
             @ApiResponse(responseCode = "404", description = "Not Found"),
     })
     @GetMapping(path = {"/{numeroCartao}"})
-    public ResponseEntity<RegisterCard> balanceCard(@PathVariable String numeroCartao) {
+    public ResponseEntity<RegisterCard> balanceCard(@PathVariable String numeroCartao) throws DataBaseExceptions {
 
         log.info("[INICIO] - Consultando cartao: {}", numeroCartao);
         return ResponseEntity.status(HttpStatus.OK).body(serviceCard.cardBalance(numeroCartao));
