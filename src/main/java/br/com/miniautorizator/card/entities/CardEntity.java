@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "CARDS")
 public class CardEntity {
 
